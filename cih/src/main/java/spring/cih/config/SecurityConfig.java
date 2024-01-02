@@ -11,6 +11,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
@@ -29,8 +30,9 @@ public class SecurityConfig {
                 .headers((headerConfig)->headerConfig.frameOptions(frameOptionsConfig -> frameOptionsConfig.disable())) // 2번
                 .authorizeHttpRequests((authorizeRequests) -> authorizeRequests
                         //.requestMatchers(PathRequest.toH2Console()).permitAll()
-                        .requestMatchers("/", "/login", "sign-up", "/check-email", "/check-email-token", "/email-login", "/login-link").permitAll()
+                        .requestMatchers("/", "/login", "/sign-up", "/check-email", "/check-email-token", "/email-login", "/login-link").permitAll()
                         .requestMatchers(HttpMethod.GET, "/profile/*").hasRole("USER")
+                        .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll() // 정적 자원 허용
                 )
                 .exceptionHandling((exceptionConfig) -> exceptionConfig
                         .authenticationEntryPoint(unauthorizedEntryPoint)
@@ -47,10 +49,11 @@ public class SecurityConfig {
                 .logout((logoutConfig) -> logoutConfig.logoutSuccessUrl("/")
                 );
 
-
-        ;
         return http.build();
     }
+
+
+
     public final AuthenticationEntryPoint unauthorizedEntryPoint =
             (request, response, authException) -> {
                 ErrorResponse fail = new ErrorResponse(HttpStatus.UNAUTHORIZED, "Spring security unauthorized...");
