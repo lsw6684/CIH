@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Entity
 @Getter @Setter @EqualsAndHashCode(of = "id") // 순환 참조로 Stack overflow 방지
@@ -17,7 +18,7 @@ public class Account {
     private String email;
 
     @Column(unique = true)
-    private String nickName;
+    private String nickname;
 
     private String password;
 
@@ -38,17 +39,20 @@ public class Account {
     @Lob @Basic(fetch = FetchType.EAGER)// 255보다 높으면 Text로 전환
     private String profileImage;
 
-    private boolean createdByEmail;
+    private boolean studyCreatedByEmail;
 
-    private boolean createdByWeb;
+    private boolean studyCreatedByWeb = true;
 
-    private boolean enrollmentResultByEmail;
+    private boolean studyEnrollmentResultByEmail;
 
-    private boolean enrollmentResultByWeb;
+    private boolean studyEnrollmentResultByWeb = true;
 
-    private boolean updateByEmail;
-    private boolean updateByWeb;
+    private boolean studyUpdatedByEmail;
+
+    private boolean studyUpdatedByWeb = true;
 
 
-
+    public void generateEmailCheckToken() {
+        this.emailCheckToken = UUID.randomUUID().toString();
+    }
 }
